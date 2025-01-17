@@ -7,13 +7,19 @@ const ErrorHandler = require("../utils/ErrorHandler");
 
 // create user
 router.post("/create-user",upload.single("file"), async(req,res)=>{
-    const {name, email, password} = req.body;
+    const { name, email, password } = req.body;
+    console.log(name, email, password);
+    
     const userEmail = await User.findOne({email});
     if (userEmail) {
         return next(new ErrorHandler("User already exists", 400));
       }
 const filename = req.file.filename ;
-const fileUrl = path.join(filename);
+    const fileUrl = path.join(filename);
+    console.log("fileUrl", fileUrl);
+    console.log(filename,"filename");
+    
+    
 const user={
     name:name,
     email:email,
