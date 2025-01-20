@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
-export default function Product({ name, images, description, price }) {
+import { useNavigate } from "react-router-dom";
+
+export default function Product({ _id, name, images, description, price }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (!images || images.length === 0) return;
     const interval = setInterval(() => {
