@@ -16,11 +16,14 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/sign-up" element={<SignupPage />} />
+        {/* For new product */}
         <Route path="/create-product" element={<CreateProduct />} />
-        <Route path="/myproducts" element={<MyProducts />} />
+        {/* For edit product by id */}
+        <Route path="/create-product/:id" element={<CreateProduct />} />
+        {/* For viewing the user’s products */}
+        <Route path="/my-products" element={<MyProducts />} />
       </Routes>
     </BrowserRouter>
   );
 };
-
 export default App;
