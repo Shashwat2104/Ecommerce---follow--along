@@ -1,213 +1,49 @@
-import React, { useState } from "react";
-import { AiOutlinePlusCircle } from "react-icons/ai";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import Product from "../components/Product";
 
-const CreateProduct = () => {
-  const [images, setImages] = useState([]);
-  const [previewImages, setPreviewImages] = useState([]);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [tags, setTags] = useState("");
-  const [price, setPrice] = useState("");
-  const [stock, setStock] = useState("");
-  const [email, setEmail] = useState("");
+export default function MyProducts() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const email = "gowrishvarma@gmail.com";
 
-  const categoriesData = [
-    { title: "Electronics" },
-    { title: "Fashion" },
-    { title: "Books" },
-    { title: "Home Appliances" },
-  ];
-
-  const handleImagesChange = (e) => {
-    const files = Array.from(e.target.files);
-
-    setImages((prevImages) => prevImages.concat(files));
-
-    const imagePreviews = files.map((file) => URL.createObjectURL(file));
-    setPreviewImages((prevPreviews) => prevPreviews.concat(imagePreviews));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("Hi");
-
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description);
-    formData.append("category", category);
-    formData.append("tags", tags);
-    formData.append("price", price);
-    formData.append("stock", stock);
-    formData.append("email", email);
-
-    images.forEach((image) => {
-      formData.append("images", image);
-    });
-
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/api/v2/product/create-product",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+  useEffect(() => {
+    fetch(`http://localhost:8000/api/v2/product/my-products?email=${email}`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
         }
-      );
+        return res.json();
+      })
+      .then((data) => {
+        setProducts(data.products);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(" Error fetching products:", err);
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [email]);
 
-      if (response.status === 201) {
-        alert("Product created successfully!");
-        setImages([]);
-        setPreviewImages([]);
-        setName("");
-        setDescription("");
-        setCategory("");
-        setTags("");
-        setPrice("");
-        setStock("");
-        setEmail("");
-      }
-    } catch (err) {
-      console.error("Error creating product:", err);
-      alert("Failed to create product. Please check the data and try again.");
-    }
-  };
+  if (loading) {
+    return (
+      <div className="text-center text-white mt-10">Loading products...</div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500 mt-10">Error: {error}</div>;
+  }
 
   return (
-    <div className="w-[90%] max-w-[500px] bg-white shadow h-auto rounded-[4px] p-4 mx-auto">
-      <h5 className="text-[24px] font-semibold text-center">Create Product</h5>
-      <form onSubmit={handleSubmit}>
-        <div className="mt-4">
-          <label className="pb-1 block">
-            Email <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="email"
-            value={email}
-            className="w-full p-2 border rounded"
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            required
-          />
-        </div>
-        <div>
-          <label className="pb-1 block">
-            Name <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={name}
-            className="w-full p-2 border rounded"
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter product name"
-            required
-          />
-        </div>
-        <div className="mt-4">
-          <label className="pb-1 block">
-            Description <span className="text-red-500">*</span>
-          </label>
-          <textarea
-            value={description}
-            className="w-full p-2 border rounded"
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter product description"
-            rows="4"
-            required
-          ></textarea>
-        </div>
-        <div className="mt-4">
-          <label className="pb-1 block">
-            Category <span className="text-red-500">*</span>
-          </label>
-          <select
-            className="w-full p-2 border rounded"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            required
-          >
-            <option value="">Choose a category</option>
-            {categoriesData.map((i) => (
-              <option value={i.title} key={i.title}>
-                {i.title}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="mt-4">
-          <label className="pb-1 block">Tags</label>
-          <input
-            type="text"
-            value={tags}
-            className="w-full p-2 border rounded"
-            onChange={(e) => setTags(e.target.value)}
-            placeholder="Enter product tags"
-          />
-        </div>
-        <div className="mt-4">
-          <label className="pb-1 block">
-            Price <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            value={price}
-            className="w-full p-2 border rounded"
-            onChange={(e) => setPrice(e.target.value)}
-            placeholder="Enter product price"
-            required
-          />
-        </div>
-        <div className="mt-4">
-          <label className="pb-1 block">
-            Stock <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            value={stock}
-            className="w-full p-2 border rounded"
-            onChange={(e) => setStock(e.target.value)}
-            placeholder="Enter stock quantity"
-            required
-          />
-        </div>
-        <div className="mt-4">
-          <label className="pb-1 block">
-            Upload Images <span className="text-red-500">*</span>
-          </label>
-          <input
-            name="image"
-            type="file"
-            id="upload"
-            className="hidden"
-            multiple
-            onChange={handleImagesChange}
-            required
-          />
-          <label htmlFor="upload" className="cursor-pointer">
-            <AiOutlinePlusCircle size={30} color="#555" />
-          </label>
-          <div className="flex flex-wrap mt-2">
-            {previewImages.map((img, index) => (
-              <img
-                src={img}
-                key={index}
-                alt="Preview"
-                className="w-[100px] h-[100px] object-cover m-2"
-              />
-            ))}
-          </div>
-        </div>
-        <button
-          type="submit"
-          className="w-full mt-4 bg-blue-500 text-white p-2 rounded"
-        >
-          Create
-        </button>
-      </form>
+    <div className="w-full min-h-screen bg-neutral-800">
+      <h1 className="text-3xl text-center text-white py-6">My products</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 p-4">
+        {products.map((product) => (
+          <Product key={product._id} {...product} />
+        ))}
+      </div>
     </div>
   );
-};
-
-export default CreateProduct;
+}
