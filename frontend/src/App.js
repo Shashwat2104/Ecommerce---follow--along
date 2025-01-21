@@ -8,6 +8,7 @@ import {
   MyProducts,
   Cart,
   ProductDetails,
+  Profile,
 } from "./Routes.js";
 import "./App.css";
 
@@ -23,6 +24,7 @@ const App = () => {
         <Route path="/my-products" element={<MyProducts />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/product/:id" element={<ProductDetails />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );
